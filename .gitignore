@@ -1,5 +1,7 @@
 .idea
 
+SDL2.dll
+
 # will have compiled files and executables
 debug/
 target/
