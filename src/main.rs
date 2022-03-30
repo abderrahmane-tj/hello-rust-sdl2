@@ -1,5 +1,8 @@
 extern crate sdl2;
 
+pub mod game;
+
+use crate::game::Game;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
@@ -16,16 +19,12 @@ pub fn main() {
         .unwrap();
 
     let mut canvas = window.into_canvas().build().unwrap();
-
-    canvas.set_draw_color(Color::RGB(0, 255, 255));
-    canvas.clear();
-    canvas.present();
     let mut event_pump = sdl_context.event_pump().unwrap();
+
     let mut i = 0;
+    let game = Game::new(&mut canvas);
+
     'running: loop {
-        i = (i + 1) % 255;
-        canvas.set_draw_color(Color::RGB(i, 64, 255 - i));
-        canvas.clear();
         for event in event_pump.poll_iter() {
             match event {
                 Event::Quit { .. }
@@ -37,8 +36,7 @@ pub fn main() {
             }
         }
         // The rest of the game loop goes here...
-
-        canvas.present();
+        game.draw(&mut canvas, &mut i);
         ::std::thread::sleep(Duration::new(0, 1_000_000_000u32 / 60));
     }
 }
