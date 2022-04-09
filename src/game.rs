@@ -1,24 +1,24 @@
-use sdl2::event::Event;
-use sdl2::keyboard::Keycode;
 use sdl2::pixels::Color;
 use sdl2::rect::Rect;
-use sdl2::render::{Texture, TextureCreator, WindowCanvas};
-use sdl2::{IntegerOrSdlError, Sdl};
-use std::time::Duration;
-use sdl2::video::WindowContext;
+use sdl2::render::{Texture, WindowCanvas};
+
+use crate::RootContext;
 
 pub struct Game<'t> {
     texture: Texture<'t>,
-    canvas: WindowCanvas,
+    canvas: &'t mut WindowCanvas,
 }
 
 impl<'t> Game<'t> {
-    pub fn new(
-        tc: &TextureCreator<WindowContext>,
-        canvas: WindowCanvas,
-    ) -> Game {
-        let texture = tc.create_texture_target(None, 600, 10).unwrap();
-        Game { texture, canvas }
+    pub fn new(root_context: &'t mut RootContext) -> Game<'t> {
+        let texture = root_context
+            .texture_creator
+            .create_texture_target(None, 600, 10)
+            .unwrap();
+        Game {
+            texture,
+            canvas: root_context.canvas,
+        }
     }
 
     pub fn draw_background(self: &mut Self) {

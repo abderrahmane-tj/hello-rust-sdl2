@@ -6,7 +6,16 @@ pub mod screen;
 use std::time::Duration;
 use sdl2::event::Event;
 use sdl2::keyboard::Keycode;
+use sdl2::render::{TextureCreator, WindowCanvas};
+use sdl2::Sdl;
+use sdl2::video::WindowContext;
 use crate::game::Game;
+
+pub struct RootContext<'r> {
+    canvas: &'r mut WindowCanvas,
+    texture_creator: TextureCreator<WindowContext>,
+    sdl: &'r Sdl,
+}
 
 pub fn main() {
     let sdl = sdl2::init().unwrap();
@@ -18,10 +27,14 @@ pub fn main() {
         .build()
         .unwrap();
 
-    let canvas = window.into_canvas().build().unwrap();
-    let tc = canvas.texture_creator();
-
-    let mut game = Game::new(&tc, canvas);
+    let mut canvas = window.into_canvas().build().unwrap();
+    let texture_creator = canvas.texture_creator();
+    let root_context = &mut RootContext {
+        canvas: &mut canvas,
+        texture_creator,
+        sdl: &sdl,
+    };
+    let mut game = Game::new(root_context);
 
     let mut event_pump = sdl.event_pump().unwrap();
 
